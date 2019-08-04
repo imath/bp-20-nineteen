@@ -1,0 +1,2724 @@
+// Stylesheet Guidence Notes
+// Table of content represents a guide to sections of the sheet.
+// Note that not all sections may be described in the body of the
+// rulesets only those that require styles for a given theme.
+// Sub sections might not exist but can be added as required
+// as per BP Lists - 'activity' section.
+
+// Twenty Nineteen Media Queries / Breakpoints
+// @media screen and (min-width: 600px)  // Mobile width
+// @media screen and (min-width: 768px)  // Tablet width
+// @media screen and (min-width: 1168px) // Desktop width
+// @media screen and (min-width: 1379px) // Wide width
+
+// Mixins and Variables
+
+// Common margin values
+$spacing-val-lg: 40px;
+$spacing-val-md: 20px;
+$spacing-val-sm: 10px;
+$spacing-val-xs: 5px;
+
+// Responsive widths.
+$mobile_width: 600px;
+$tablet_width: 768px;
+$desktop_width: 1168px;
+$wide_width: 1379px;
+
+// A simple mixin to handle font-sizing.
+@mixin font-size($font-size: 1) {
+	$font__size-ratio: 1.125;
+	font-size: 1em * ($font-size * $font__size-ratio);
+}
+
+// Border border-radius mixins
+@mixin border-radius($radius) {
+	-webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
+	-ms-border-radius: $radius;
+	border-radius: $radius;
+	background-clip: padding-box;
+}
+
+@mixin border-top-radius($radius) {
+	-webkit-border-top-right-radius: $radius;
+	border-top-right-radius: $radius;
+	-webkit-border-top-left-radius: $radius;
+	border-top-left-radius: $radius;
+	background-clip: padding-box;
+}
+
+@mixin border-right-radius($radius) {
+	-webkit-border-bottom-right-radius: $radius;
+	border-bottom-right-radius: $radius;
+	-webkit-border-top-right-radius: $radius;
+	border-top-right-radius: $radius;
+	background-clip: padding-box;
+}
+
+@mixin border-bottom-radius($radius) {
+	-webkit-border-bottom-right-radius: $radius;
+	border-bottom-right-radius: $radius;
+	-webkit-border-bottom-left-radius: $radius;
+	border-bottom-left-radius: $radius;
+	background-clip: padding-box;
+}
+
+@mixin border-left-radius($radius) {
+	-webkit-border-bottom-left-radius: $radius;
+	border-bottom-left-radius: $radius;
+	-webkit-border-top-left-radius: $radius;
+	border-top-left-radius: $radius;
+	background-clip: padding-box;
+}
+
+// Box sizing
+@mixin box-model($box-model) {
+	-webkit-box-sizing: $box-model;
+	-moz-box-sizing: $box-model;
+	box-sizing: $box-model;
+}
+
+// Calc
+@mixin calc($property, $expression) {
+	#{$property}: -webkit-calc(#{$expression});
+	#{$property}: -moz-calc(#{$expression});
+	#{$property}: calc(#{$expression});
+}
+
+// BP message boxes
+@mixin message-box($background, $text-color: null) {
+
+	@if $text-color {
+		// if a param was passed through
+		$text-color: $text-color;
+	} @else {
+		$text-color: darken($background, 50%);
+	}
+
+	background: lighten($background, 10%);
+	border: 1px solid darken($background, 10%);
+	color: $text-color;
+}
+
+// Twenty Nineteen font family
+@mixin body-font() {
+	font-family: NonBreakingSpaceOverride, "Hoefler Text", "Baskerville Old Face", Garamond, "Times New Roman", serif;
+}
+
+@mixin headings-font() {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+// Variables: color definitions
+$content-background: #fff;
+$light-background:   #f1f1f1;
+$medium-background:  #ccc;
+$dark-background:    #0073aa;
+$border-color:       #999;    // border color is varied using rgba
+$border-light:       #eaeaea; // BP dividers
+$border-med:         #ddd;
+$body-text:          #111;    // 2019 body text color
+$notice-error:       #c85a6e;
+$notice-warning:     #d05656;
+$notice-info:        #9fd1e2;
+$notice-update:      #ced98c;
+$stripe-odd:         #ebf0ff;
+$stripe-even:        #dbe5ff;
+$unread:             #dce5ff;
+$link-action:        #c82b2b;
+
+@mixin button($font-size: 1) {
+
+	@include headings-font();
+	@include font-size($font-size);
+	background-color: $dark-background;
+	color: $content-background;
+	border: none;
+	transition: background 150ms ease-in-out;
+
+	&:hover {
+		color: $content-background;
+		background-color: $body-text;
+		border: none;
+	}
+}
+
+/*------------------------------------------------------------------------------
+
+This is the BuddyPress companion stylesheet for
+the WordPress Twenty Nineteen theme.
+
+@version 5.0.0
+
+This sheet supports the primary BuddyPress styles in buddypress.css
+
+If you are running as a child theme of twentynineteen this stylesheet will be
+loaded by default. If you want to modify the styles the normal BP Theme Compat
+hierarchy works and you can copy the file to buddypress/css/ or community/css/
+in your child themes root & either start over or modify the rulesets.
+
+If you do not require the styles you can dequeue them from the themes
+functions file.
+
+Please see this codex article for more information:
+http://codex.buddypress.org/themes/buddypress-companion-stylesheets/
+
+--------------------------------------------------------------------------------
+>>> TABLE OF CONTENTS:
+--------------------------------------------------------------------------------
+1.0 Theme Structural Elements & overrides
+2.0 - Navigation - General
+	2.1 - Navs - Object Nav / Sub Nav (item-list-tabs)
+	2.2 - Pagination
+3.0 - Images
+4.0 - BP Lists / Loops Generic
+	4.1 - Activity Loop
+		4.1.1 Whats New Activity
+		4.1.2 - Activity Listing
+		4.1.3 - Activity Comments
+	4.2 - Members Loop
+	4.3 - Groups Loop
+	4.4 - Blogs Loop
+5.0 - Directories - Members, Groups, Blogs, Forums
+6.0 - Single Item screens: User Account & Single Group Screens
+	6.1 - Item Headers: Global
+		6.1.1 - item-header: Groups
+		6.1.2 - item-header: User Accounts
+	6.2 - Item Body: Global
+		6.2.1 - item-body: Groups
+			6.2.1.1 - Management settings screens
+			6.2.1.2 - Group members list
+			6.2.1.3 - Group Send Invites
+		6.2.2 - item-body: User Accounts
+			6.2.2.1 - classes, pag, filters
+			6.2.2.2 - Extended Profiles
+			6.2.2.3 - Groups
+			6.2.2.4 - friends
+			6.2.2.5 - Private Messaging Threads
+			6.2.2.6 - Settings
+7.0 - Forms  -  General
+8.0 - Tables -  General
+9.0 - Error / Success Messages
+10.0 - Ajax Loading, Widgets, General classes
+------------------------------------------------------------------------------*/
+
+/**
+*-------------------------------------------------------------------------------
+* @section 1.0 - Theme - Structural Elements & overrides
+*-------------------------------------------------------------------------------
+*/
+
+// Twenty Nineteen  adds a generic grouped ruleset of clear:both;
+// for all heading h# elements this is problematic where floats are concerned
+// We reset this here under our #buddypress namespace
+#buddypress {
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		clear: none;
+	}
+}
+
+body.buddypress {
+
+	@media screen and (max-width: $wide_width ) {
+
+		.entry .entry-content > * {
+			float: none;
+			max-width: none;
+		}
+	} // close @media
+} // .buddypress (body class)
+
+/**
+*-------------------------------------------------------------------------------
+* @section 2.0 - Navigation - General
+*-------------------------------------------------------------------------------
+*/
+
+/**
+*----------------------------------------------------------
+* @section 2.1 - Navs Object Nav / Sub Nav (item-list-tabs)
+*
+* The main navigational elements for all BP screens
+*----------------------------------------------------------
+*/
+
+// We have a need to override BP specifity
+// so some rulesets sets are seemingly over weighted in selectors
+
+#buddypress {
+
+	// active/current states all navs
+	div.item-list-tabs {
+
+		ul {
+
+			li.selected {
+
+				a {
+					background: $dark-background;
+					color: #fff;
+					opacity: 1;
+				}
+			}
+		}
+	}
+	// Global Nav Styles
+	div.item-list-tabs {
+
+		ul {
+			background-color: $content-background;
+			overflow: hidden;
+			padding: $spacing-val-xs 0;
+
+			li {
+
+				a {
+					font-weight: 600;
+
+					span {
+						border-radius: 25%;
+					}
+
+					&:hover {
+						background: $body-text;
+						color: $content-background;
+					}
+				}
+			}
+		}
+	}
+
+	/*__ Horizontal menus __*/
+	#object-nav {
+
+		ul {
+			overflow: hidden;
+
+			li {
+				float: none;
+			}
+
+			li:not(.selected) {
+
+				a {
+					opacity: 0.7;
+
+					&:hover {
+						opacity: 1;
+					}
+				}
+			}
+
+			@media screen and (min-width: $mobile_width) {
+
+				li {
+					float: left;
+				}
+			}
+		}
+	}
+
+	div#subnav.item-list-tabs {
+		margin-top: 0;
+
+		ul {
+			background-color: $content-background;
+			border-bottom: 0;
+			padding: 0;
+
+			li.last {
+				background: $content-background;
+				margin-top: 0;
+				padding: $spacing-val-xs $spacing-val-xs $spacing-val-xs 0;
+				width: 100%;
+
+				select,
+				select:focus {
+					background: transparent;
+					border: 0;
+					outline: 0;
+				}
+
+				select,
+				label,
+				option {
+
+					@include font-size(0.8);
+				}
+
+				select {
+					font-style: italic;
+				}
+			}
+
+			@media screen and (min-width: $mobile_width) {
+
+				li.last {
+					text-align: right;
+				}
+			}
+		} // close ul
+	} // close #subnav
+
+	// active/current states all navs
+	div.item-list-tabs {
+
+		ul {
+
+			li.selected,
+			li.current {
+
+				a {
+					background: $dark-background;
+					color: #fff;
+					opacity: 1;
+				}
+			}
+		}
+	}
+
+} // close #buddypress
+
+/*__ Vertical menu User Account / Group single screens __*/
+
+// This block contains rules to re-factor the item-body structural element
+// to sit alongside the vert menu
+
+@media screen and (min-width: $desktop_width) {
+
+	#buddypress {
+
+		#item-header,
+		#item-body {
+			background: $content-background;
+		}
+
+		#object-nav {
+			border-right: 1px solid $border-med;
+			float: left;
+			margin-right: -1px;
+			width: 200px;
+
+			ul {
+				border-bottom: 0;
+				padding: 0;
+
+				li {
+					float: none;
+					overflow: hidden;
+
+					span {
+						background: $content-background;
+						border-radius: 10%;
+						float: right;
+						margin-right: 2px;
+					}
+				}
+			}
+		}
+
+		#item-body {
+			border-left: 1px solid $border-med;
+			overflow: hidden;
+			padding: 0 0 0 $spacing-val-md;
+			width: auto;
+
+			#subnav {
+				margin: 0 0 0 (-$spacing-val-md);
+			}
+		}
+
+	} // close  #buddypress
+} // close @media
+
+/**
+*----------------------------------------------------------
+* @section 2.2 - Pagination
+*----------------------------------------------------------
+*/
+
+#buddypress {
+
+	div.pagination {
+		box-shadow: none;
+
+		.pag-count {
+			margin-left: 0;
+		}
+
+		.pagination-links {
+			margin-right: 0;
+
+			span,
+			a {
+				height: auto;
+				line-height: 1;
+				padding: 5px;
+			}
+
+			.prev,
+			.next {
+				background-color: transparent;
+				color: inherit;
+				overflow: visible;
+				width: auto;
+
+				&:before {
+					display: none;
+				}
+			}
+
+			.prev {
+				left: auto;
+				position: static;
+			}
+
+			.next {
+				position: static;
+				right: auto;
+			}
+		} // close .pagination-links
+	} // close .pagination
+} // close #buddypress
+
+/**
+*-------------------------------------------------------------------------------
+* @section 4.0 - BP Lists / Loops Generic
+*-------------------------------------------------------------------------------
+*/
+
+// Adjusts Meta items and various elements to match Twenty Nineteen font-family
+#buddypress {
+
+	.item-list {
+
+		.activity-header,
+		.activity-meta {
+
+			@include body-font();
+		}
+
+		a.activity-time-since {
+			color: #717171;
+		}
+	}
+}
+
+// Trying to position the action div absolute has bad consequences where
+// aditional items are displayed, floating is an alternative that
+// allows natural flow expansion.
+// This block:
+// * Manages li items, Stacks them small screen, floated left at wider screens.
+// * Adjusts display of action buttons at small screen mobile up.
+// Adjusts Meta items to match Twenty Nineteen font-family
+
+#buddypress {
+
+	ul.item-list {
+
+		li {
+			overflow: hidden !important;
+
+			// Undo BP floats to center avatars initially mobile up
+			.item-avatar {
+				margin-bottom: $spacing-val-sm;
+
+				@media screen and (min-width: $mobile_width) {
+					margin-bottom: 0;
+				}  // close @media
+
+				text-align: center;
+
+				a {
+					border-bottom: 0;
+				}
+
+				img.avatar {
+					display: inline-block;
+					float: none;
+					// Quite early on we need to move avatars to the left(right)
+					@media screen and (min-width: $mobile_width) {
+						display: block;
+						float: left;
+					}  // close @media
+				}
+			}
+
+			.item {
+				margin-left: 70px;
+
+				.item-title {
+
+					span.update {
+						display: block;
+					}
+				}
+
+				span.activity {
+					display: block;
+					font-style: italic;
+				}
+
+				.item-desc {
+					margin-left: 0;
+				}
+			}
+
+			div.action {
+				// remove BP margin left
+				margin-left: 0;
+
+				div {
+					display: inline-block;
+					margin: $spacing-val-sm 0;
+					width: 100%;
+
+					a {
+						display: block;
+						width: 100%;
+
+						@include button(0.6);
+						@include border-radius(5px);
+						font-weight: 600;
+					}
+
+					@media screen and (min-width: $mobile_width) {
+						// keep buttons to a row small tablet up
+						margin: 0 $spacing-val-sm $spacing-val-sm 0;
+						width: auto;
+					} // close @media
+
+				} // close div
+
+				.meta {
+					font-style: italic;
+				}
+
+			} // close .action
+
+		} // close li
+
+		li.bp-single-group {
+
+			.meta {
+				display: block;
+			}
+		}
+	} // close .item-list
+} // close #buddypress
+
+/**
+*----------------------------------------------------------
+* @section 4.1 - Activity
+*----------------------------------------------------------
+*/
+
+/**
+*-----------------------------------------------------
+* @section 4.1.1 - Activity Whats New
+*-----------------------------------------------------
+*/
+
+#buddypress {
+
+	form#whats-new-form {
+
+		// Line-height issue inherited from BP rules, override.
+		p.activity-greeting {
+			line-height: 1.4;
+		}
+
+		#whats-new {
+
+			&:focus {
+				border-color: $dark-background;
+				outline: thin solid rgba(0, 115, 170, 0.15);
+				outline-offset: -4px;
+			}
+		}
+
+		#whats-new-submit input {
+			line-height: 1.2;
+			outline: none;
+			padding: 0.76rem 1rem;
+		}
+
+		// corrective measure for clipped elements due to JS inline styling
+
+		@media screen and (max-width: 30em) {
+
+			#whats-new-post-in-box {
+
+				select {
+
+					@include font-size(0.8);
+					max-width: 120px;
+				}
+			}
+		} // close @media
+
+		@media screen and (max-width: $mobile_width) {
+
+			#whats-new-content {
+				clear: left;
+				margin: $spacing-val-sm 0 $spacing-val-lg;
+				padding: $spacing-val-sm 0 0;
+
+				#whats-new-submit {
+					float: none;
+
+					input {
+						width: 100%;
+					}
+				}
+			}
+
+			#whats-new-options {
+				display: flex;
+				flex-direction: column;
+
+				#whats-new-submit {
+					order: 2;
+				}
+
+				#whats-new-post-in-box {
+					order: 1;
+				}
+			}
+		} // close @media
+
+		#whats-new-options[style] {
+
+			#whats-new-post-in-box {
+				border: 1px solid rgba($border-color, 0.5);
+				float: left;
+				line-height: 1.5;
+				margin-top: 12px;
+				padding-left: 0.2em;
+				width: 100%;
+
+				select {
+					background: none;
+					border: 0;
+					float: right;
+					margin: 0;
+					min-height: 1.5em;
+					outline: 0;
+					padding-left: 0.4em;
+				}
+			}
+
+			@media screen and (min-width: 30em) {
+
+				#whats-new-post-in-box {
+					width: auto;
+				}
+
+				#whats-new-submit {
+					float: right;
+				}
+			} // close @media
+
+		} // close #whats-new-options
+
+	} // close #whats-new-form
+
+	// User account form requires matching bp default specificity
+	#item-body {
+
+		form#whats-new-form {
+			margin: $spacing-val-lg 0;
+		}
+	}
+} // close #buddypress
+
+/**
+*-----------------------------------------------------
+* @section 4.1.2 - Activity Listing
+*-----------------------------------------------------
+*/
+
+#buddypress {
+
+	#activity-stream {
+
+		// re-size activity avatars and stack small screen
+		// refactor main elements positioning medium up.
+		li {
+			padding: 25px 0 15px;
+
+			.activity-avatar {
+				float: none;
+				text-align: center;
+
+				a {
+					display: inline-block;
+
+					img.avatar {
+						display: inline-block;
+						float: none;
+						height: 50px;
+						width: 50px;
+						margin-bottom: $spacing-val-md;
+						margin-left: 0;
+					}
+				}
+			} // close .activity-avatar
+
+			.activity-content {
+				margin-left: 0;
+
+				.activity-header {
+
+					@include font-size(0.6);
+				}
+			}
+
+			@media screen and (min-width: $tablet_width) {
+
+				.activity-avatar {
+					float: left;
+					margin-right: $spacing-val-sm;
+					text-align: left;
+
+					a {
+						border-bottom: 0;
+					}
+				}
+
+				.activity-content {
+					margin: 0;
+					overflow: hidden;
+
+					.activity-header {
+
+						@include font-size(0.8);
+					}
+				}
+
+			} // close @media
+
+		} // close li
+
+		li.mini {
+
+			.activity-avatar {
+
+				a {
+
+					img.avatar {
+						height: 30px;
+						margin-left: 15px;
+						margin-top: 5px;
+						width: 30px;
+					}
+				}
+			}
+
+			.activity-content {
+
+				.activity-header {
+
+					@include font-size(0.6);
+				}
+
+				@media screen and (min-width: $tablet_width) {
+
+					.activity-header {
+
+						@include font-size(0.8);
+					}
+				} // close @media
+			}
+		}
+
+		.activity-content {
+			margin-top: -12px;
+
+			.activity-header {
+				line-height: inherit;
+				margin-right: 0;
+
+				p {
+					color: #717171;
+					padding: 0 0.2em;
+				}
+
+				img.avatar {
+					display: inline-block;
+					vertical-align: text-top;
+					width: 20px;
+					height: 20px;
+				}
+			} // close .activity-header
+
+			.activity-meta {
+
+				a {
+					display: block;
+					margin: 0 0 $spacing-val-xs;
+
+					@media screen and (min-width: $mobile_width) {
+						display: inline-block;
+						margin: 0;
+					} // close @media
+				}
+
+				a.button {
+					padding: 8px;
+					background-color: $content-background;
+					color: $dark-background;
+
+					span {
+						color: $content-background;
+						background-color: $dark-background;
+					}
+
+					&:hover {
+						text-decoration: underline;
+						color: darken($dark-background, 10%);
+					}
+				}
+
+				a.button.bp-secondary-action {
+					border: none;
+				}
+
+				a.button.delete-activity,
+				a.button.delete-activity-single {
+					color: $notice-warning;
+
+					&:hover {
+						text-decoration: underline;
+						color: darken($notice-warning, 10%);
+					}
+				}
+			}
+
+		} // close .activity-content
+
+		.load-more {
+			background: $light-background;
+			border: 1px solid transparent;
+			padding: $spacing-val-sm;
+
+			&:focus,
+			&:hover {
+				background: darken($light-background, 1%);
+				border: 1px solid rgba(#9fd1e2, 0.3);
+
+				a {
+					font-style: italic;
+				}
+			}
+
+			a {
+				display: block;
+			}
+		}
+
+	} // close #activity-stream
+} // close #buddypress
+
+/* Single activity view  - activity permalink */
+
+.activity-permalink {
+
+	#buddypress {
+		background: none; // counter the .bp-user faux column background
+		#activity-stream {
+
+			li.activity-item {
+				padding: $spacing-val-md 0;
+			}
+
+			.activity-avatar img.avatar {
+				width: auto;
+				height: auto;
+			}
+
+			li.mini {
+
+				.activity-avatar img.avatar {
+					width: 65px;
+					height: 65px;
+				}
+
+				.activity-header {
+
+					@include font-size(0.6);
+
+					@media screen and (min-width: $tablet_width) {
+
+						@include font-size(0.8);
+					} // close @media
+
+					margin-bottom: $spacing-val-lg;
+
+					p {
+						padding: $spacing-val-md;
+					}
+				}
+			}
+		}
+	}
+}
+
+/**
+*-----------------------------------------------------
+* @section 4.1.3 - Activity Comments
+*-----------------------------------------------------
+*/
+#buddypress {
+
+	#activity-stream {
+
+		.activity-comments {
+			margin: $spacing-val-sm 0 0;
+
+			a {
+				color: #717171;
+			}
+
+			&.has-comments {
+				border-left: 1px solid $border-light;
+			}
+
+			.ac-form {
+				padding: $spacing-val-md 0 0;
+			}
+
+			> ul {
+				background: rgba($light-background, 0.6);
+				margin: 15px 0 0 2px;
+
+				@media screen and (min-width: $mobile_width) {
+					margin-left: 70px;
+				} // close @media
+
+				ul {
+					// all nested ul margins & padding flattened initially
+					margin-left: 1%;
+					padding-left: 0;
+
+					@media screen and (min-width: 30em) {
+						margin-left: 1%;
+						padding-left: 1em;
+					} // close @media
+				}
+
+				ul li {
+					border-left: 1px solid $border-light;
+					border-top: 0;
+					padding-left: 0.2em;
+				}
+
+				.acomment-meta {
+					border-bottom: 1px solid $border-light;
+					color: #737373;
+					font-style: italic;
+				}
+
+				// Display the user avatar stacked up to 30em
+				// reduce/widen the content margins
+				@media screen and (max-width: $mobile_width) {
+
+					.acomment-avatar {
+						display: block;
+						text-align: center;
+
+						a,
+						img.avatar {
+							display: inline;
+							float: none;
+						}
+					}
+
+					.acomment-content,
+					.acomment-meta,
+					.acomment-options {
+						margin: $spacing-val-xs;
+					}
+
+					.acomment-content {
+						padding: 0 $spacing-val-sm;
+					}
+				} // close @media
+
+			} // close the ul li comments construct
+
+			.ac-reply-avatar {
+				display: none;
+			}
+
+			.ac-reply-content {
+				margin-left: 0;
+				padding-left: 0;
+			}
+
+			@media screen and (min-width: $mobile_width) {
+
+				.ac-reply-avatar {
+					display: block;
+				}
+
+				.ac-reply-content {
+					overflow: hidden;
+				}
+			} // close @media
+
+			.ac-reply-avatar img {
+				border: none;
+			}
+
+			.ac-form {
+
+				input[type="submit"],
+				.ac-reply-cancel {
+					display: inline-block;
+
+					@include font-size(0.6);
+					line-height: 1.2;
+					padding: 4px 10px;
+					width: 100px;
+				}
+
+				.ac-reply-cancel {
+
+					@include headings-font();
+					text-align: center;
+					vertical-align: bottom;
+					color: #0073aa;
+
+					&:hover {
+						color: darken(#0073aa, 10%);
+						text-decoration: underline;
+					}
+				}
+
+			} // close .ac-form
+
+		} // close .activity-comments
+	} // close .activity
+
+} // close #buddypress
+
+/**
+*----------------------------------------------------------
+* @section 4.2 - Members Loop
+*----------------------------------------------------------
+*/
+
+
+/**
+*-------------------------------------------------------------------------------
+* @section 6.0 - Single Item screens: User Account & Single Group Screens
+*-------------------------------------------------------------------------------
+*/
+
+
+/**
+*-----------------------------------------------------------
+* @subsection 6.1 - Item Header Global
+*-----------------------------------------------------------
+*/
+
+.bp-user,
+.single-item.groups {
+
+	@media screen and (max-width: $tablet_width) {
+
+		main {
+
+			header.entry-header {
+				padding-bottom: 1rem;
+			}
+		}
+	} // close @media
+
+	@media screen and (max-width: $mobile_width) {
+
+		h1,
+		#item-header-content {
+			text-align: center;
+		}
+	} // close @media
+
+	#buddypress {
+
+		#item-header-content {
+
+			h2:before {
+				display: none;
+			}
+
+			#item-buttons {
+
+				.generic-button {
+
+					a {
+
+						@include button(0.6);
+						@include border-radius(5px);
+						font-weight: 600;
+						padding: 8px;
+					}
+				}
+			}
+		}
+
+		#item-header-avatar {
+
+			img.avatar {
+				width: auto;
+				height: auto;
+			}
+		}
+
+		@media screen and (max-width: $tablet_width) {
+
+			#item-header {
+
+				.generic-button {
+					float: none;
+					margin: 1.5em 0 0;
+				}
+			}
+		} // close @media
+
+		@media screen and (max-width: $mobile_width) {
+
+			h1 {
+				margin-bottom: 0;
+			}
+
+			#item-header-avatar {
+
+				img.avatar {
+					margin-right: 0;
+				}
+			}
+
+			#item-header-content {
+				width: 100%;
+			}
+		} // close @media
+	}
+}
+
+/**
+*-----------------------------------------------------
+* @subsection 6.1.1 - item-header Groups
+*
+* Group Specific Item Header
+*-----------------------------------------------------
+*/
+
+.single-item.groups {
+
+	#buddypress {
+
+		@media screen and (max-width: $tablet_width) {
+
+			#item-header {
+
+				#item-meta {
+					margin-bottom: $spacing-val-md;
+				}
+			}
+		} // close @media
+
+		// Move visual flow of avatar & item-actions at narrow width,
+		// avatar first after group title
+		@media screen and (max-width: $mobile_width) {
+
+			div#item-header {
+				display: flex;
+				flex-direction: column;
+
+				#item-header-avatar {
+					order: 1;
+					text-align: center;
+
+					a {
+						border-bottom: 0;
+
+						img {
+							display: inline-block;
+							float: none;
+						}
+					}
+				}
+
+				#item-header-content {
+					order: 2;
+				}
+
+				#item-actions {
+					order: 3;
+				}
+			}
+		} // close @media
+
+		div#item-header {
+			padding-bottom: $spacing-val-lg;
+
+			div#item-actions {
+				margin: 0;
+				width: 100%;
+
+				@media screen and (min-width: $mobile_width) {
+					clear: none;
+					float: right;
+					width: 50%;
+				} // close @media
+
+				h2 {
+					background: $content-background;
+					color: $body-text;
+
+					@include font-size(0.8);
+
+					@media screen and (min-width: $tablet_width) {
+
+						@include font-size(1);
+					} // close @media
+
+					padding: 0.2em;
+				}
+			} // close item-actions
+
+			@media screen and (min-width: $tablet_width) {
+
+				#item-header-avatar,
+				#item-header-content {
+					float: left;
+				}
+
+				#item-header-avatar {
+					width: 21%;
+				}
+
+				#item-header-content {
+					margin-left: 4%;
+					width: 40%;
+				}
+
+				div#item-actions {
+					float: right;
+					width: 28%;
+				}
+
+			} // close @media
+
+		} // close #item-header
+	} // close #buddypress
+} // close .groups
+
+/**
+*-----------------------------------------------------
+* @subsection 6.1.2 - Item Header User Accounts
+*
+* User Accounts Specific Item Header
+*-----------------------------------------------------
+*/
+
+.bp-user {
+
+	#buddypress {
+
+		#item-header {
+			padding: $spacing-val-md 0;
+
+			#item-header-avatar {
+				text-align: center;
+				width: 100%;
+				height: 100%;
+
+				a {
+					border-bottom: 0;
+					display: inline-block;
+					float: none;
+				}
+			}
+
+			@media screen and (min-width: $tablet_width) {
+
+				#item-header-avatar {
+					float: left;
+					width: 20%;
+
+					img.avatar,
+					a {
+						float: left;
+					}
+				}
+
+				#item-header-content {
+					float: right;
+					margin-right: 5%;
+					width: 69%;
+				}
+
+			} // close @media
+
+		} // close #item-header
+
+	} // close #buddypress
+} // close .bp-user
+
+/**
+*-----------------------------------------------------------
+* @subsection 6.2 - Item Body: Global
+*-----------------------------------------------------------
+*/
+// Manage the margins inherited from 2015 inside the item-body sections
+// generally far too large a top margin for headings in our lists
+#item-body {
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		margin: 1em 0;
+
+		a {
+			border-bottom: 0;
+		}
+	}
+}
+
+/**
+*----------------------------------------------------
+* @subsection 6.2.1 - Item Body Groups
+*
+* Groups specific item body rules -  screens
+*----------------------------------------------------
+*/
+
+
+/**
+*-----------------------------------------
+* @subsection 6.2.1.1 - Group Management
+*-----------------------------------------
+*/
+
+// headings settings screens & general global settings styles
+.groups {
+
+	#group-settings-form {
+
+		h3 {
+			background: $content-background;
+			color: $body-text;
+			padding: 0.2em;
+		}
+		// remove backgrounds from request list member names.
+		#request-list {
+
+			h4 {
+				background: none;
+				color: inherit;
+			}
+		}
+	}
+}
+
+.groups.edit-details {
+
+	#group-settings-form {
+
+		label {
+			background: $light-background;
+
+			@include border-top-radius(4px);
+			color: $body-text;
+			display: inline-block;
+			margin-bottom: 0;
+			padding: 0.2em;
+			width: 80%;
+
+			@media screen and (min-width: $mobile_width) {
+				width: 60%;
+			} // close @media
+
+		}
+
+		textarea + p label {
+			background: none;
+			color: inherit;
+
+			@include font-size(0.8);
+			width: auto;
+		}
+
+	}
+} // close .groups.edit-details
+
+.groups.group-settings {
+
+	#group-settings-form,
+	#create-group-form {
+
+		div.radio {
+
+			label {
+				border: 1px solid $border-light;
+				padding: 0.2em;
+			}
+
+			ul {
+				color: #767676;
+
+				@include font-size(0.8);
+			}
+		}
+
+	}
+} // close .groups.group-settings
+
+.groups.group-avatar {
+
+	form > p {
+		margin-top: $spacing-val-md;
+	}
+
+}
+
+.groups.manage-members {
+
+	#group-settings-form {
+
+		.item-list {
+
+			li {
+				border-bottom: 1px solid $border-light;
+
+				img,
+				h5 {
+					float: left;
+
+					> a {
+						border-bottom: 0;
+					}
+				}
+
+				span.small {
+					clear: left;
+					display: block;
+					float: none;
+					margin-top: $spacing-val-sm;
+
+					a {
+						display: inline-block;
+						margin: $spacing-val-xs 0;
+						width: 100%;
+
+						@media screen and (min-width: $mobile_width) {
+							width: auto;
+						} // close @media
+					}
+				}
+
+				h5 {
+					margin: 0;
+				}
+
+				div.action {
+					position: relative;
+					top: auto;
+					right: auto;
+				}
+			}
+		}
+	}
+} // close .groups.manage-members
+
+/**
+*-----------------------------------------
+* @subsection 6.2.1.2 - Group members
+*-----------------------------------------
+*/
+
+/* Members loop */
+
+.groups.group-members {
+
+	#buddypress {
+
+		#members-group-list {
+
+			li {
+
+				@media screen and (max-width: 30em) {
+
+					> a {
+						border-bottom: 0;
+						display: block;
+						margin-bottom: $spacing-val-sm;
+						text-align: center;
+
+						img.avatar {
+							display: inline;
+							float: none;
+						}
+					}
+				} // close @media
+
+				h5 {
+					display: inline-block;
+
+					@include font-size(0.8);
+
+					margin: 0;
+
+					a {
+						border-bottom: 0;
+					}
+				} //  close h5
+
+				span.activity {
+
+					@include font-size(0.5);
+				}
+
+				.action {
+					top: 0;
+				}
+			} // close li
+		}
+	}
+}
+
+// Manage the members search for groups nav specifically.
+.groups.group-members {
+
+	#subnav {
+
+		li {
+
+			@media screen and (max-width: $mobile_width) {
+				background: $content-background;
+				padding: $spacing-val-md 0;
+			} // close @media
+
+			width: 100%;
+
+			#search-members-form {
+				float: right;
+
+				@media screen and (max-width: $mobile_width) {
+					margin: 0;
+					width: 100%;
+
+					label {
+
+						input[type="text"] {
+							width: 100%;
+						}
+					}
+				} // close @media
+
+				margin: $spacing-val-xs $spacing-val-xs 0 0;
+			}
+		}
+	}
+}
+
+/**
+*-----------------------------------------
+* @subsection 6.2.1.3 - Group Send Invites
+*-----------------------------------------
+*/
+
+.groups.group-invites {
+
+	#item-body {
+
+		.item-list {
+
+			.action {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	@media screen and (min-width: $tablet_width) {
+
+		#buddypress {
+
+			#item-body {
+
+				#message {
+					margin-top: 0;
+				}
+			}
+		}
+	} // close @media
+
+	@media screen and (min-width: 55em) {
+
+		#buddypress {
+
+			#send-invite-form {
+				margin-top: 0;
+			}
+		}
+	} // close @media
+
+	#item-body {
+
+		@media screen and (max-width: $tablet_width) {
+
+			.left-menu {
+				float: none;
+				margin: $spacing-val-sm 0;
+
+				#invite-list {
+					height: auto;
+					width: auto;
+				}
+			}
+
+			.main-column {
+				margin-left: 0;
+			}
+
+			.submit {
+
+				input {
+					display: inline-block;
+					width: 100%;
+				}
+			}
+
+		} // close @media
+	} // close .item-body
+
+} // close .groups.group-invites
+
+/**
+*-----------------------------------------------------
+* @subsection 6.2.2 - Item Body User Accounts
+*
+* User Account specific item body rules
+*-----------------------------------------------------
+*/
+
+.bp-user {
+
+	.entry-title {
+		margin-bottom: 0.5em;
+	}
+}
+
+/**
+*--------------------------------------------
+* @subsection 6.2.2.1 - classes, pag, filters
+*--------------------------------------------
+*/
+
+.bp-user {
+
+	#buddypress {
+
+		table {
+
+			th {
+
+				@include font-size(0.8);
+			}
+
+			td {
+
+				@include font-size(0.5);
+			}
+
+			@media screen and (min-width: $tablet_width) {
+
+				th {
+
+					@include font-size(1);
+				}
+
+				td {
+
+					@include font-size(0.8);
+				}
+			} // close @media
+
+			@media screen and (min-width: $desktop_width) {
+
+				th {
+
+					@include font-size(1.2);
+				}
+
+				td {
+
+					@include font-size(1);
+				}
+			} // close @media
+		}
+
+		.pag-count {
+			font-style: italic;
+		}
+
+		.notifications-options-nav,
+		.messages-options-nav {
+			float: left;
+			width: 100%;
+
+			@media screen and (min-width: 30em) {
+				width: 50%;
+			} // close @media
+
+			select,
+			input {
+
+				@include font-size(0.8);
+				outline: 0;
+				padding: 0;
+			}
+
+			select {
+				float: left;
+				margin-right: 0;
+				width: 100%;
+
+				@media screen and (min-width: 30em) {
+					width: 60%;
+				} // close @media
+			}
+
+			input {
+				float: right;
+
+				@include headings-font();
+				line-height: 1.5;
+				margin-top: $spacing-val-sm;
+				width: 100%;
+
+				&[disabled]:hover {
+					background: none;
+				}
+
+				@media screen and (min-width: 30em) {
+					margin-top: 0;
+					width: 38%;
+				} // close @media
+			}
+
+		} // close .notifications-options-nav
+
+	} // close #BuddyPress
+
+} // close .bp-user
+
+/**
+	*-------------------------------------------
+	* @subsection 6.2.2.2 - Extended Profiles
+	*-------------------------------------------
+	*/
+
+.bp-user {
+
+	#buddypress {
+
+		.profile {
+
+			h2 {
+				margin-bottom: 1em;
+			}
+
+			.bp-widget {
+
+				h2 {
+
+					@include font-size(1.2);
+					background: lighten($medium-background, 10%);
+					color: $body-text;
+					margin-bottom: 0;
+					padding: 0.4em;
+
+					&:before {
+						display: none;
+					}
+				}
+
+				table {
+					margin-top: 0;
+				}
+			}
+		}
+	}
+}
+
+/* Edit Profile */
+.bp-user {
+
+	#buddypress {
+
+		.profile {
+
+			#profile-edit-form {
+
+				.button-nav:before,
+				.button-nav:after {
+					content: " ";
+					display: table;
+				}
+
+				.button-nav:after {
+					clear: both;
+				}
+
+				ul.button-nav {
+					border-bottom: 1px solid $border-light;
+					margin-left: 0;
+
+					li {
+						float: left;
+						margin-bottom: 0;
+
+						&.current {
+							border: 1px solid $border-light;
+							border-bottom-color: #fff;
+							margin-bottom: -1px;
+						}
+					} // li
+
+					a {
+						background: none;
+						border: 0;
+
+						@include font-size(1.2);
+					}
+				} //.button-nav
+
+				.field-visibility-settings-toggle,
+				.field-visibility-settings {
+
+					@include font-size(0.8);
+				}
+
+				.field-visibility-settings-close,
+				.visibility-toggle-link {
+					background: $light-background;
+					color: $body-text;
+					padding: 0.2em 0.5em;
+				}
+			} // close profile form
+
+			.bp-avatar {
+
+				#bp-delete-avatar {
+
+					a {
+						font-size: inherit;
+					}
+				}
+			}
+		} // close .profile
+
+	} // close #BuddyPress
+} // close .bp-user
+
+/**
+	*-------------------------------------------
+	* @subsection 6.2.2.3 - Groups
+	*-------------------------------------------
+	*/
+.bp-user {
+
+	#buddypress {
+
+		#groups-list {
+
+			li {
+
+				.item {
+
+					@media screen and (min-width: $desktop_width) {
+						left: 5%;
+						width: 50%;
+					} // close @media
+				}
+			}
+		}
+
+	} // close #BuddyPress
+
+} // close .bp-user
+
+/**
+	*-------------------------------------------
+	* @subsection 6.2.2.5 - Private Messaging
+	*-------------------------------------------
+	*/
+
+.bp-user {
+
+	#buddypress {
+
+		.message-action-unstar {
+
+			span.icon {
+
+				&:before {
+					color: $dark-background;
+				}
+			}
+		}
+
+		#message-thread {
+			//Single message view
+			a {
+				border-bottom: 0;
+			}
+
+			#message-subject {
+				background: $content-background;
+				color: $body-text;
+				padding: 0.3em 0 0.3em 0.2em;
+			}
+
+			#message-recipients {
+				font-style: italic;
+
+				a.confirm {
+					border: 1px solid $border-light;
+					font-style: normal;
+				}
+			}
+
+			.message-metadata {
+
+				&:after {
+					clear: both;
+					content: "";
+					display: table;
+				}
+
+				img.avatar {
+					float: none;
+				}
+
+				@media screen and (min-width: $tablet_width) {
+
+					img.avatar {
+						float: left;
+					}
+				} // close @media
+
+				.message-star-actions {
+					float: right;
+					margin-right: $spacing-val-xs;
+					position: static;
+				}
+			} // close .message-meta
+
+			.message-content {
+				background: $light-background;
+				border: 1px solid $border-light;
+				margin: $spacing-val-sm 0 0 0;
+				padding: 0.3em;
+			}
+
+			#send-reply {
+
+				.message-content {
+					background: $content-background;
+					border: 0;
+				}
+			}
+
+			.alt {
+				background: $content-background;
+			}
+		} // close message-thread  Singular view!
+
+		#message-threads {
+
+			thead {
+
+				tr {
+					background: lighten($medium-background, 10%);
+				}
+
+				th.bulk-select-all {
+					position: relative;
+					border: none;
+					padding-top: 0;
+
+					label {
+						clip: auto;
+						overflow: visible;
+						display: block;
+						word-break: keep-all;
+						left: 30px;
+						top: 15px;
+						white-space: nowrap;
+
+						@include font-size(0.5);
+					}
+				}
+			}
+
+			tr {
+				border: solid 1px darken($border-light, 20%);
+
+				td {
+					background: $content-background;
+					display: inline-block;
+					float: none;
+					border: none;
+				}
+
+				td.thread-star,
+				td.thread-options {
+					height: 2.4em;
+					padding-bottom: 0.2em;
+					padding-top: 0.2em;
+
+					@media screen and (max-width: $tablet_width) {
+						padding-top: 0;
+					} // close @media
+				}
+
+				td.bulk-select-check,
+				td.thread-from {
+					height: 2.6em;
+
+					img.avatar {
+						display: inline-block;
+						width: auto;
+						height: auto;
+						vertical-align: text-top;
+					}
+
+					@media screen and (max-width: $mobile_width) {
+						height: 5.2em;
+					} // close @media
+				}
+
+				td.thread-from,
+				td.thread-options {
+					border-left: 0 !important;
+
+					@include calc(width, "100% - 30px");
+					margin-left: 0;
+				}
+
+				td.thread-info {
+					padding-left: 41px;
+					width: 100%;
+				}
+
+				td.thread-options {
+					text-align: right;
+
+					a {
+
+						@include font-size(0.5);
+						line-height: 2.2;
+					}
+				}
+
+				span.from {
+					display: none;
+				}
+
+				span.activity {
+					display: block;
+					float: right;
+					line-height: 2;
+
+					@media screen and (max-width: $mobile_width) {
+						clear: both;
+
+						@include font-size(0.4);
+						width: 100%;
+					} // close @media
+				}
+			}
+
+			tr.unread {
+
+				td {
+					background: $unread;
+					border: none;
+				}
+			}
+
+			th {
+				display: none;
+			}
+
+			th.bulk-select-all {
+				border-bottom: 0;
+				display: inline-block;
+				text-align: left;
+			}
+
+			th.bulk-select-all,
+			td.bulk-select-check,
+			td.thread-star {
+				border-right: 0;
+				width: 30px;
+			}
+		}
+
+		.acfb-holder {
+			list-style: none;
+
+			li {
+				margin-left: 0;
+			}
+
+			li.friend-tab {
+				background: lighten($notice-info, 20%);
+				border: inherit;
+				margin-right: 0;
+				padding: 0.5em;
+
+				span.p {
+					// the 'X' close
+					padding-left: $spacing-val-sm;
+
+					&:focus,
+					&:hover {
+						color: $link-action;
+						cursor: pointer;
+					}
+				}
+
+				a {
+					border-bottom: 0;
+					text-decoration: none;
+
+					img {
+						// this is the tiny user avatar
+						display: inline-block;
+						height: 20px;
+						vertical-align: middle;
+						width: 20px !important; // override inline style
+					}
+				}
+			}
+		}
+
+		#message-threads.sitewide-notices {
+
+			td {
+				width: 100%;
+
+				strong {
+					background: lighten($medium-background, 10%);
+					color: $body-text;
+					display: block;
+					margin-bottom: 0.4em;
+					padding-left: 0.2em;
+				}
+
+				a {
+					display: inline-block;
+				}
+			}
+
+			td:first-child {
+				display: none;
+			}
+
+			td:first-child + td + td {
+				// notice date
+				border-bottom: 0;
+
+				span {
+					line-height: 1;
+				}
+			}
+
+			td:last-child {
+				// notice actions
+				border-bottom-color: darken($border-light, 20%);
+				line-height: 1;
+				text-align: right;
+
+				a:last-child:after {
+					content: attr(title);
+					display: block;
+					line-height: initial;
+					text-indent: 0;
+				}
+			}
+		}
+
+	} // close #BuddyPress
+
+	// acfb auto complete name list sits in doc footer before body close
+	.ac_results {
+		background: #eee;
+		padding-left: $spacing-val-sm;
+
+		ul {
+			margin: 0;
+		}
+
+		li {
+			margin: $spacing-val-sm 0;
+
+			&:focus,
+			&:hover {
+				cursor: pointer;
+			}
+		}
+	}
+
+} // close .bp-user
+
+/**
+	*------------------------------
+	* @subsection 6.2.2.6 - Settings
+	*------------------------------
+	*/
+
+.bp-user {
+
+	#buddypress {
+
+		#settings-form {
+			// 'p' = email notification screen sub heading
+			> p {
+
+				@include font-size(1.5);
+				@include headings-font();
+				font-weight: 700;
+				letter-spacing: -0.02em;
+				line-height: 1.2;
+				-webkit-font-smoothing: antialiased;
+				margin: $spacing-val-md 0 $spacing-val-sm;
+
+				&:before {
+					background: #767676;
+					content: "\020";
+					display: block;
+					height: 2px;
+					margin: 1rem 0;
+					width: 1em;
+				}
+			}
+		}
+
+		table.notification-settings {
+
+			th.title {
+				width: 75%;
+			}
+
+			td.yes,
+			td.no {
+				vertical-align: middle;
+			}
+
+			td {
+				word-break: keep-all;
+			}
+		}
+		// Profile visibility table td widths
+		table.profile-settings {
+			width: 100%;
+
+			th.field-group-name,
+			td.field-name {
+				width: 50%;
+			}
+
+			@media screen and (min-width: $tablet_width) {
+
+				th.field-group-name,
+				td.field-name {
+					width: 70%;
+				}
+			} // close @media
+
+			th.title,
+			td.field-visibility {
+				width: 30%;
+			}
+
+			td.field-visibility {
+
+				select {
+					width: 100%;
+				}
+			}
+		}
+
+	} // close #BuddyPress
+
+} // close .bp-user
+
+/**
+*-------------------------------------------------------------------------------
+* @section 7.0 - Forms  - General
+*-------------------------------------------------------------------------------
+*/
+
+#buddypress {
+
+	input[type="submit"],
+	input[type="button"] {
+
+		@include button(0.8);
+	}
+
+	div.activity-comments {
+
+		form {
+
+			.ac-textarea {
+				background: $light-background;
+				border: 1px solid rgba($border-color, 0.3);
+
+				textarea {
+					background: none;
+					border: 0;
+				}
+			}
+		}
+	}
+
+	select {
+		border: 1px solid rgba($border-color, 0.5);
+	}
+
+	// Overrides for embedded WP editors.
+	.wp-editor-wrap {
+
+		a.button,
+		button,
+		input[type="submit"],
+		input[type="button"],
+		input[type="reset"] {
+			padding: 0 5px 1px;
+		}
+	}
+
+} // close #buddypress
+
+
+#buddypress {
+
+	// Manage form control widths override BP 75% width.
+
+	.standard-form,
+	.group-create-form {
+
+		li {
+			float: none;
+			list-style: none;
+		}
+
+		input[type="text"],
+		textarea {
+			width: 100%;
+		}
+
+		input[type="submit"],
+		input[type="button"]#group-creation-previous {
+			line-height: 1.2;
+			outline: none;
+			padding: 0.76rem 1rem;
+		}
+
+		.radio label {
+			color: $body-text;
+		}
+
+		.editfield {
+			margin-bottom: 1em;
+		}
+	}
+
+	div.dir-search,
+	div.message-search,
+	li.groups-members-search {
+		float: none;
+		margin: $spacing-val-sm 0;
+
+		// Stylise the seach form elements, in part this deals with padding
+		// issues on the submit & sizing issues between bp styles & Twenty Nineteen
+
+		form { // *sigh* only to bludgeon over specified rules
+			overflow: hidden;
+
+			label {
+				float: left;
+				width: 80%;
+			}
+
+			input[type="text"] {
+				float: left;
+				margin: 0 1em 0 0;
+				width: 80%;
+				outline-color: #fff;
+			}
+
+			input[type="text"],
+			input[type="submit"] {
+
+				@include font-size(0.8);
+				border: 0;
+				line-height: inherit;
+			}
+
+			input[type="text"] {
+				padding: 0.2em 0 0.2em 0.2em;
+			}
+
+			input[type="submit"] {
+				float: right;
+				font-weight: 400;
+				padding: 0.2em 1em;
+				text-align: center;
+				text-transform: none;
+				width: 20%;
+			}
+		}// close form
+
+	} // close .dir-search, .message-search
+
+	// Shift the search parent to the right and allow to shrinkwrap
+	@media screen and (min-width: $mobile_width) {
+
+		div.dir-search,
+		div.message-search,
+		li.groups-members-search {
+			float: right;
+			margin-bottom: 5px !important;
+
+			form {
+
+				label,
+				input[type="text"],
+				input[type="submit"] {
+					width: auto;
+				}
+			}
+		}
+	} // close @media
+
+	@media screen and (min-width: $desktop_width) {
+
+		.dir-search,
+		.message-search {
+
+			form {
+
+				input[type="text"] {
+
+					@include font-size(1);
+				}
+
+				input[type="submit"] {
+
+					@include font-size(1);
+				}
+			}
+		}
+	} // close @media
+
+} // close #buddypress
+
+/**
+*-------------------------------------------------------------------------------
+* @section 8.0 - Tables - General
+*-------------------------------------------------------------------------------
+*/
+
+// Adjust table font sizes, default too large proportionally
+// This approach will require refinement and perhaps re-location to
+// a more general typography section to manage BP elements grouped under
+// breakpoints. Provide top/bottom margins for tables, lacking in BP styles
+#buddypress {
+
+	table {
+
+		@include font-size(0.8);
+		margin: $spacing-val-md 0;
+
+		tr th {
+			background: lighten($medium-background, 10%);
+			border-color: darken($border-light, 20%);
+			color: $body-text;
+		}
+
+		// Reduce the themes inherited paragraph margins in tables
+		p {
+			margin-bottom: 0.5em;
+		}
+	}
+
+	@media screen and (min-width: $desktop_width) {
+
+		table {
+
+			@include font-size(0.8);
+		}
+	} // close @media
+}
+
+/*__ User Account tables __*/
+
+#buddypress {
+
+	// Manage some table cells widths that are disproportionate to their content
+	.notifications,
+	.messages-notices {
+
+		th {
+			width: 30%;
+
+			&.bulk-select-all {
+				text-align: center;
+				width: 10%;
+			}
+		}
+
+		.bulk-select-check,
+		.thread-star {
+			text-align: center;
+		}
+
+		.notification-actions,
+		td.thread-options {
+			text-align: center;
+
+			a {
+				display: inline-block;
+				margin: 0;
+				padding: 0;
+			}
+		}
+
+	} // .notifications, .message-notices
+
+} // #buddypress
+
+/**
+*-------------------------------------------------------------------------------
+* @section 9.0 - Error / Success messages
+*-------------------------------------------------------------------------------
+*/
+
+// message args ($variable-color, text-color)
+// Leave text-color undefined to automagically set text color
+// to background color darker by 50%
+
+#buddypress {
+
+	#item-body {
+
+		div#message {
+			margin-top: $spacing-val-md;
+
+			@media screen and (min-width: $desktop_width) {
+				margin-right: $spacing-val-md;
+			} // close @media
+		}
+	}
+
+	div#message {
+
+		p {
+
+			@include font-size(1);
+			font-weight: 700;
+		}
+
+		&.info {
+
+			p {
+
+				@include message-box($notice-info);
+			}
+		}
+
+		&.updated {
+
+			p {
+
+				@include message-box($notice-update);
+			}
+		}
+
+	} // close #message
+
+} // close  #buddypress
+
+// Without direct classes on our mesages ( 'warning' )
+// we need to use the body classes
+.delete-group {
+
+	#buddypress {
+
+		div#message.info {
+
+			p {
+
+				@include message-box($notice-warning);
+			}
+		}
+	}
+}
+
+/**
+*-------------------------------------------------------------------------------
+* @section 10.0 - Ajax Loading, Widgets, General classes
+*-------------------------------------------------------------------------------
+*/
+
+#buddypress {
+
+	a.button {
+
+		@include button(0.6);
+		padding: 8px;
+
+		span {
+			color: $dark-background;
+			background-color: $content-background;
+		}
+
+		&:hover {
+
+			span {
+				color: $dark-background;
+				background-color: $content-background;
+			}
+		}
+
+		&.bp-secondary-action {
+			color: $dark-background;
+			background-color: $content-background;
+			border: solid 1px $dark-background;
+
+			&:hover {
+				color: $content-background;
+				background-color: $body-text;
+				border-color: $body-text;
+			}
+		}
+	}
+}
