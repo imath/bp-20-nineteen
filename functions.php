@@ -128,7 +128,7 @@ add_action( 'wp_enqueue_scripts', 'bp_20_nineteen_enqueue_parent_style' );
  *
  * @since 1.1.0
  */
-function pratic_group_manage_members_enqueue_script() {
+function bp_20_nineteen_group_manage_members_enqueue_script() {
 	if ( ! function_exists( 'bp_rest_api_is_available' ) ) {
 		return;
 	}
@@ -142,7 +142,7 @@ function pratic_group_manage_members_enqueue_script() {
 		);
 	}
 }
-add_action( 'bp_enqueue_scripts', 'pratic_group_manage_members_enqueue_script' );
+add_action( 'bp_enqueue_scripts', 'bp_20_nineteen_group_manage_members_enqueue_script' );
 
 /**
  * Remove the search form Legacy adds to search for group members as it's now included into the group
@@ -150,11 +150,11 @@ add_action( 'bp_enqueue_scripts', 'pratic_group_manage_members_enqueue_script' )
  *
  * @since 1.1.0
  */
-function pratic_remove_legacy_group_manage_members_add_search_form() {
+function bp_20_nineteen_remove_legacy_group_manage_members_add_search_form() {
 	if ( ! function_exists( 'bp_rest_api_is_available' ) ) {
 		return;
 	}
 
 	remove_action( 'bp_before_group_admin_form', 'bp_legacy_theme_group_manage_members_add_search' );
 }
-add_action( 'bp_theme_compat_actions', 'pratic_remove_legacy_group_manage_members_add_search_form' );
+add_action( 'bp_theme_compat_actions', 'bp_20_nineteen_remove_legacy_group_manage_members_add_search_form' );
